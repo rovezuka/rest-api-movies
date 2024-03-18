@@ -1,0 +1,318 @@
+definitions:
+  models.Actor:
+    properties:
+      birth_date:
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.ActorWithMovies:
+    properties:
+      birth_date:
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      movies:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+    type: object
+  models.Movie:
+    properties:
+      actors:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      rating:
+        type: number
+      release_date:
+        type: string
+      title:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /actors:
+    post:
+      consumes:
+      - application/json
+      description: Создает нового актера на основе полученных данных
+      parameters:
+      - description: Информация о новом актере
+        in: body
+        name: actor
+        required: true
+        schema:
+          $ref: '#/definitions/models.Actor'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Информация о созданном актере
+          schema:
+            $ref: '#/definitions/models.Actor'
+        "400":
+          description: Неверное тело запроса
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Создание актера
+      tags:
+      - actors
+  /actors/{actorID}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет актера по его идентификатору
+      parameters:
+      - description: Идентификатор актера
+        in: path
+        name: actorID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Успешное удаление актера
+        "400":
+          description: Неверный ID актера
+          schema:
+            type: string
+        "404":
+          description: Актер не найден
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Удаление актера
+      tags:
+      - actors
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию об актере по его идентификатору
+      parameters:
+      - description: Идентификатор актера
+        in: path
+        name: actorID
+        required: true
+        type: integer
+      - description: Новая информация об актере
+        in: body
+        name: actor
+        required: true
+        schema:
+          $ref: '#/definitions/models.Actor'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Успешное обновление информации об актере
+        "400":
+          description: Неверный ID актера или неверное тело запроса
+          schema:
+            type: string
+        "404":
+          description: Актер не найден
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Обновление информации об актере
+      tags:
+      - actors
+  /actors/movies:
+    get:
+      consumes:
+      - application/json
+      description: Получает список актеров с перечислением фильмов, в которых они
+        снимались
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список актеров с фильмами
+          schema:
+            items:
+              $ref: '#/definitions/models.ActorWithMovies'
+            type: array
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Получение списка актеров с фильмами
+      tags:
+      - actors
+  /movies:
+    get:
+      consumes:
+      - application/json
+      description: Получает список фильмов с возможностью поиска и сортировки
+      parameters:
+      - description: Поиск по названию фильма или имени актера
+        in: query
+        name: search
+        type: string
+      - description: Сортировка по названию (title), рейтингу (rating) или дате выпуска
+          (release_date)
+        in: query
+        name: sortBy
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список фильмов
+          schema:
+            items:
+              $ref: '#/definitions/models.Movie'
+            type: array
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Получение списка фильмов
+      tags:
+      - movies
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новый фильм на основе полученных данных
+      parameters:
+      - description: Информация о новом фильме
+        in: body
+        name: movie
+        required: true
+        schema:
+          $ref: '#/definitions/models.Movie'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Успешное добавление фильма
+        "400":
+          description: Неверное тело запроса
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Добавление фильма
+      tags:
+      - movies
+  /movies/{movieID}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет фильм по его идентификатору
+      parameters:
+      - description: Идентификатор фильма
+        in: path
+        name: movieID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Успешное удаление фильма
+        "400":
+          description: Неверный ID фильма
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Удаление фильма
+      tags:
+      - movies
+    get:
+      consumes:
+      - application/json
+      description: Получает информацию о фильме по его идентификатору
+      parameters:
+      - description: Идентификатор фильма
+        in: path
+        name: movieID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о фильме
+          schema:
+            $ref: '#/definitions/models.Movie'
+        "400":
+          description: Неверный ID фильма
+          schema:
+            type: string
+        "404":
+          description: Фильм не найден
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Получение информации о фильме по ID
+      tags:
+      - movies
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о фильме по его идентификатору
+      parameters:
+      - description: Идентификатор фильма
+        in: path
+        name: movieID
+        required: true
+        type: integer
+      - description: Новая информация о фильме
+        in: body
+        name: movie
+        required: true
+        schema:
+          $ref: '#/definitions/models.Movie'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Успешное обновление информации о фильме
+        "400":
+          description: Неверный ID фильма или неверное тело запроса
+          schema:
+            type: string
+        "404":
+          description: Фильм не найден
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Обновление информации о фильме
+      tags:
+      - movies
+swagger: "2.0"
